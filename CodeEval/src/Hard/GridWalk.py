@@ -4,8 +4,6 @@ Created on Mar 17, 2015
 @author: Ivan Varus
 '''
 
-from collections import deque
-
 
 def sum_of_digits(_num):
     num = abs(_num)
@@ -16,18 +14,20 @@ def sum_of_digits(_num):
     return res
 
 
-def accessible(point):
-    return sum(map(sum_of_digits, point)) < 20
+def accessible(p):
+    return sum(map(sum_of_digits, p)) < 20
 
 
 def walk(start):
     visited = set()
-    path = deque()
-    path.append(start)
+    # its very interesting, but tests show that a set with pop()
+    # arbitrary element will perform much faster, than deque
+    path = set()
+    path.add(start)
     while len(path) > 0:
         p = path.pop()
         visited.add(p)
-        path.extend(filter(lambda pp: accessible(pp) and pp not in visited,
+        path.update(filter(lambda pp: pp not in visited and accessible(pp),
             ((p[0], p[1]-1), (p[0], p[1]+1), (p[0]-1, p[1]), (p[0]+1, p[1]))))
     return len(visited)
 
