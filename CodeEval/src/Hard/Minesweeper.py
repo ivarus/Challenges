@@ -7,23 +7,24 @@ Created on Mar 18, 2015
 import sys
 
 
-def sum_of_mines(ls, i, j, m, n):
-    s = sum(ls[k*n+l] == '*'
-            for l in range(max(0, j-1), min(n, j+2))
-            for k in range(max(0, i-1), min(m, i+2)))
-    return s
-
-
-def solve_gen(ls, m, n):
+def minsweeper_gen(field, size):
+    m, n = size
     for i in range(m):
         for j in range(n):
-            if ls[i*n + j] == '*':
-                yield '*'
+            if field[i*n + j] == '.':
+                r1 = range(max(0, j-1), min(n, j+2))
+                r2 = range(max(0, i-1), min(m, i+2))
+                s = sum(field[k*n+l] == '*' for l in r1 for k in r2)
+                yield str(s)
             else:
-                yield str(sum_of_mines(ls, i, j, m, n))
+                yield '*'
+
+
+def minesweeper(field, size):
+    return ''.join(minsweeper_gen(field, size))
 
 
 with open(sys.argv[1], 'r') as test_cases:
     for test in test_cases:
-        size_s, sep, ls = test.partition(';')
-        print(''.join(solve_gen(ls, *map(int, size_s.split(',')))))
+        size, sep, field = test.partition(';')
+        print(minesweeper(field, map(int, size.split(','))))
